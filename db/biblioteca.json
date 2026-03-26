@@ -1,0 +1,137 @@
+{
+    "libros": [
+        {
+            "isbn": "1",
+            "titulo": "pepito el guerrero",
+            "autor": "pepito el autor anonimo"
+        },
+        {
+            "isbn": "2",
+            "titulo": "pepito el mago",
+            "autor": "pepito el autor anonimo"
+        },
+        {
+            "isbn": "3",
+            "titulo": "pepito el picaro",
+            "autor": "pepito el autor anonimo"
+        },
+        {
+            "isbn": "4",
+            "titulo": "xenomorfos, guia de cual acariciar y cual mantenerte alejado",
+            "autor": "heroe anonimo, unico superviviente"
+        },
+        {
+            "isbn": "5",
+            "titulo": "cosas magicas",
+            "autor": "un mago"
+        },
+        {
+            "isbn": "6",
+            "titulo": "Me duele la tripita",
+            "autor": "Alejandro"
+        },
+        {
+            "isbn": "7",
+            "titulo": "Libro de clase",
+            "autor": "anonimo"
+        },
+        {
+            "isbn": "123",
+            "titulo": "melsdas",
+            "autor": "asdasd"
+        },
+        {
+            "isbn": "1234",
+            "titulo": "Malafama 2 La venganza",
+            "autor": "Anon"
+        },
+        {
+            "isbn": "8",
+            "titulo": "el nº8",
+            "autor": "un 9"
+        }
+    ],
+    "usuarios": [
+        {
+            "id": 1,
+            "nombre": "pepe",
+            "max_prestamos": 2
+        },
+        {
+            "id": 2,
+            "nombre": "pepa",
+            "max_prestamos": 1
+        },
+        {
+            "id": 3,
+            "nombre": "pepi",
+            "max_prestamos": 2
+        },
+        {
+            "id": 44889473,
+            "nombre": "Alejandro Javier",
+            "max_prestamos": 5
+        },
+        {
+            "id": 5,
+            "nombre": "Jordi",
+            "max_prestamos": 2
+        },
+        {
+            "id": 6,
+            "nombre": "Murico",
+            "max_prestamos": 1
+        }
+    ],
+    "prestamos": [
+        {
+            "isbn": "1",
+            "usuario_id": 1,
+            "fecha": "2026-03-12",
+            "dias": 7,
+            "devolucion": "2026-03-12"
+        },
+        {
+            "isbn": "1",
+            "usuario_id": 1,
+            "fecha": "2026-03-12",
+            "dias": 7,
+            "devolucion": "2026-03-12"
+        },
+        {
+            "isbn": "1",
+            "usuario_id": 2,
+            "fecha": "2026-03-12",
+            "dias": 7,
+            "devolucion": null
+        },
+        {
+            "isbn": "4",
+            "usuario_id": 3,
+            "fecha": "2026-03-26",
+            "dias": 7,
+            "devolucion": null
+        },
+        {
+            "isbn": "123",
+            "usuario_id": 44889473,
+            "fecha": "2026-03-26",
+            "dias": 7,
+            "devolucion": null
+        },
+        {
+            "isbn": "2",
+            "usuario_id": 1,
+            "fecha": "2026-03-27",
+            "dias": 7,
+            "devolucion": null
+        },
+        {
+            "isbn": "3",
+            "usuario_id": 1,
+            "fecha": "2026-03-27",
+            "dias": 7,
+            "devolucion": null
+        }
+    ]
+}
