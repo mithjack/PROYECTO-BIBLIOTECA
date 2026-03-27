@@ -1,4 +1,3 @@
-# servicios/prestamo_service.py
 from datetime import date, timedelta
 from typing import List, Optional, TYPE_CHECKING
 from prestamo import Prestamo
@@ -26,8 +25,7 @@ class PrestamoService:
     @staticmethod
     def esta_disponible(libro: Libro, prestamos_activos: List[Prestamo]) -> bool:
         """Verifica si un libro está disponible para préstamo"""
-        return not any(p.libro.isbn == libro.isbn and p.esta_activo() 
-                      for p in prestamos_activos)
+        return not any(p.libro.isbn == libro.isbn and p.esta_activo() for p in prestamos_activos)
     
     @staticmethod
     def obtener_prestamo_activo(isbn: str, prestamos: List[Prestamo]) -> Optional[Prestamo]:

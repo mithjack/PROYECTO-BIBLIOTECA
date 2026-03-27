@@ -11,13 +11,13 @@ class EstadisticaService:
     
     @staticmethod
     def libros_mas_prestados(prestamos: List[Prestamo], top_n: int = 5) -> List[Tuple[str, int]]:
-        """Retorna los ISBN de los libros más prestados"""
+        """Devuelve los ISBN de los libros más prestados"""
         contador = Counter(p.libro.isbn for p in prestamos)
         return contador.most_common(top_n)
     
     @staticmethod
     def usuarios_mas_activos(prestamos: List[Prestamo], usuarios: Dict[int, Usuario], top_n: int = 5) -> List[Tuple[Usuario, int]]:
-        """Retorna los usuarios con más préstamos"""
+        """Devuelve los usuarios con más préstamos"""
         contador = Counter(p.usuario.id for p in prestamos)
         
         resultados = []
@@ -36,7 +36,7 @@ class EstadisticaService:
     
     @staticmethod
     def prestamos_vencidos(prestamos_activos: List[Prestamo], fecha_actual: date) -> List[Prestamo]:
-        """Retorna los préstamos activos que están vencidos"""
+        """Devuelve los préstamos activos que están vencidos"""
         return [p for p in prestamos_activos if p.esta_vencido(fecha_actual)]
     
     @staticmethod
@@ -53,12 +53,11 @@ class EstadisticaService:
     
     @staticmethod
     def disponibilidad_libros(libros: Dict[str, Libro], isbns_prestados: set) -> Dict[str, bool]:
-        """Retorna diccionario con disponibilidad de cada libro"""
+        """Devuelve diccionario con disponibilidad de cada libro"""
         return {isbn: isbn not in isbns_prestados for isbn in libros}
     
     @staticmethod
-    def resumen_biblioteca(libros: Dict[str, Libro], usuarios: Dict[int, Usuario], 
-                           prestamos: List[Prestamo], fecha_actual: date) -> Dict:
+    def resumen_biblioteca(libros: Dict[str, Libro], usuarios: Dict[int, Usuario], prestamos: List[Prestamo], fecha_actual: date) -> Dict:
         """Genera un resumen completo de la biblioteca"""
         prestamos_activos = [p for p in prestamos if p.esta_activo()]
         isbns_prestados = {p.libro.isbn for p in prestamos_activos}
