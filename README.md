@@ -18,7 +18,8 @@ Mejoras:
   - 
 
 
-Estructura del Proyecto:
+## 📁 Estructura del Proyecto
+```
 ├── 📁 db/                      # Datos persistentes
 │   ├── biblioteca.json         # Backup JSON
 │   └── *.csv                   # Backups CSV
@@ -48,3 +49,4 @@ Estructura del Proyecto:
 └── 📄 README.md                # Este archivo
 ├── 📄 requirements.txt         # Dependencias
 ├── 📄 usuario.py               # Entidad Usuario
+```
