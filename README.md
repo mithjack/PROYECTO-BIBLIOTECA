@@ -24,10 +24,9 @@ Motivos y lugar:
   - Libro: El ISBN lo he dejado inmutable ya que es como un DNI, no puedes cambiarlo, mientras que el resto de datos si podrias por si hay alguna errata o cambios de estos.
   Incluyo validadores en el autor y el titulo.
 
-  - Prestamo: Valor de la multa calculado por variable global, no implementa más tipos de multa, es universal.
+  - Prestamo: Valor de la multa calculado por variable global, no implementa más tipos de multa, es universal. Se calcula en tiempo real por la fecha en la que se cogió el libro (un .now(), la db subida tiene 1 caso minimo para testear) 
 
-  - Exportar: Exporto tanto en CSV como JSON, para tener una copia de seguridad de emergencia, en caso de que el JSON no estuviera disponible se cargaria el CSV como respaldo. Todo centralizado en la carpeta DB.
-  También carga y guarda automaticamente para no tener que trabajar a mano, como se haria en una empresa.
+  - Exportar: Exporto tanto en CSV como JSON, para tener una copia de seguridad de emergencia, en caso de que el JSON no estuviera disponible se cargaria el CSV como respaldo. Todo centralizado en la carpeta DB. hace la carga y descarga automaticamente para no tener que trabajar a mano (al crear o modificar algo, libro, usuario, prestamo), como se haria en una empresa.
 
   - Tests: Conftest.py se utiliza para reiniciar las pruebas, ya que por cache se guardaban las bibliotecas y las pruebas daban fallo.
   - - 1 biblioteca: Pruebas exaustivas de cada funcion para comprobar que no falla nada.
@@ -36,7 +35,7 @@ Motivos y lugar:
   - - 4 prestamo: Calculo de prestamos, de multas, devoluciones y retrasos.
   - - 5 libro: Creacion y validacion de libros.
 
---<buscar validacion metaclase>
+<buscar validacion metaclase>
 
 Mejoras:
   - Localización en tiempo real de los libros.
