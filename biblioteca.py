@@ -1,5 +1,3 @@
-from doctest import FAIL_FAST
-
 from usuario import Usuario
 from libro import Libro
 from prestamo import Prestamo

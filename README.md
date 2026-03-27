@@ -13,7 +13,8 @@ Motivos y lugar:
 
   - Plugins: Incluyo los decoradores de validación como los Mixins, los he centralizado en la misma carpeta para simplificar carpetas de servicios.
   - - Las utilidades son las funciones que se comparte entre todas las clases, como limpiar pantalla, pausar pantalla o generar un menu.
-  - - Mixins tenemos los validadores comunes.
+  - - Mixins tenemos los validadores comunes, los utilizamos en libro y usuario.
+  - - Estadisticas.py: Es el plugin utilizado en main para calcular estadisticas de libros, usuarios y prestamos.
 
   - En Servicios meto la logica que no es de los modelos ni de la interfaz, porque al acabar el ejercicio tenia todo remezclado, como el validar prestamos, que tenia 50 lineas metidas y costaba leer, ahora solo tiene su estado y el servicio se encarga de la logica.
 
@@ -28,6 +29,14 @@ Motivos y lugar:
   - Exportar: Exporto tanto en CSV como JSON, para tener una copia de seguridad de emergencia, en caso de que el JSON no estuviera disponible se cargaria el CSV como respaldo. Todo centralizado en la carpeta DB.
   También carga y guarda automaticamente para no tener que trabajar a mano, como se haria en una empresa.
 
+  - Tests: Conftest.py se utiliza para reiniciar las pruebas, ya que por cache se guardaban las bibliotecas y las pruebas daban fallo.
+  - - 1 biblioteca: Pruebas exaustivas de cada funcion para comprobar que no falla nada.
+  - - 2 integración: Pruebas de prestamo, que usan varias clases y que singleton comparte datos.
+  - - 3 usuario: Pruebas de creación, poder pedir libros, creaciones validas, etc.
+  - - 4 prestamo: Calculo de prestamos, de multas, devoluciones y retrasos.
+  - - 5 libro: Creacion y validacion de libros.
+
+--<buscar validacion metaclase>
 
 Mejoras:
   - Localización en tiempo real de los libros.
