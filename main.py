@@ -35,12 +35,14 @@ def menu_gestion_bibliotecas():
                 print(f"   {marca} {i}. {nombre}")
         
         print("\n" + "-"*60)
-        print("Opciones:")
-        print("  1. Ver biblioteca actual")
-        print("  2. Crear nueva biblioteca")
-        print("  3. Cambiar a otra biblioteca")
-        print("  4. Eliminar biblioteca")
-        print("  99. Volver al menú principal")
+        print(
+            "Opciones:",
+            "  1. Ver biblioteca actual",
+            "  2. Crear nueva biblioteca",
+            "  3. Cambiar a otra biblioteca",
+            "  4. Eliminar biblioteca",
+            "  99. Volver al menú principal"
+        )
         print("="*60)
         
         opcion = input("\n➡️  ").strip()
@@ -166,7 +168,6 @@ def menu_gestion_bibliotecas():
 
 # ============ INICIALIZACIÓN ============
 
-# Crear biblioteca principal
 if not BibliotecaManager.listar_bibliotecas():
     BibliotecaManager.crear_biblioteca("Principal")
 
@@ -194,7 +195,7 @@ else:
 b.pausa()
 b.limpiar_pantalla()
 breaker = False
-# Fin Precarga
+# ============ FIN INICIALIZACIÓN ============
 
 # ============ MENÚ PRINCIPAL ============
 
@@ -215,7 +216,7 @@ while breaker == False:
         "2 - Menú de Usuarios", 
         "3 - Menú de Préstamos",
         "4 - Ver Estadísticas (plugins)",
-        "5 - Gestión de Bibliotecas",  # NUEVO
+        "5 - Gestión de Bibliotecas",
         "99 - Salir",
         "="*60,
         sep="\n"

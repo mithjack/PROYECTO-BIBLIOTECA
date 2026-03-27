@@ -26,8 +26,8 @@ class Libro(Validable, ValidadoresComunes):
         self._titulo = None
         self._autor = None
         
-        self.titulo = titulo  # Se valida automáticamente
-        self.autor = autor    # Se valida automáticamente
+        self.titulo = titulo 
+        self.autor = autor   
 
     def __str__(self):
         return f"ISBN: {self.isbn} | {self.titulo} — {self.autor}"
@@ -62,7 +62,6 @@ class Libro(Validable, ValidadoresComunes):
     @staticmethod
     def validate_titulo(value):
         """Validador para el título"""
-        # Esto lanzará TypeError si no es string, y ValueError si está vacío
         Libro.validar_no_vacio(value, "Título")
     
     @property

@@ -1,4 +1,3 @@
-# plugins/mixins.py
 """
 Módulo que proporciona metaclases y mixins para validación automática de atributos.
 """
@@ -58,7 +57,7 @@ class ValidadoresComunes:
     @staticmethod
     def validar_no_vacio(valor, campo: str = "Campo") -> None:
         """
-        Valida que un string no esté vacío.
+        Valida que un string que sea del tipo correcto y que no esté vacío.
         Solo aplica si el valor es string.
         
         INPUT:
@@ -68,11 +67,9 @@ class ValidadoresComunes:
             TypeError: Si el valor no es string
             ValueError: Si el valor está vacío
         """
-        # Primero validar tipo
         if not isinstance(valor, str):
-            raise TypeError(f"{campo} debe ser una cadena de texto, got {type(valor).__name__}")
+            raise TypeError(f"{campo} debe ser una cadena de texto, usado {type(valor).__name__}")
         
-        # Luego validar que no esté vacío
         if not valor or not valor.strip():
             raise ValueError(f"{campo} no puede estar vacío")
     
@@ -89,8 +86,7 @@ class ValidadoresComunes:
             TypeError: Si el tipo no es el esperado
         """
         if not isinstance(valor, tipo_esperado):
-            raise TypeError(f"{campo} debe ser {tipo_esperado.__name__}, "
-                          f"got {type(valor).__name__}")
+            raise TypeError(f"{campo} debe ser {tipo_esperado.__name__}, usado {type(valor).__name__}")
     
     @staticmethod
     def validar_positivo(valor, campo: str) -> None:
@@ -105,7 +101,7 @@ class ValidadoresComunes:
             ValueError: Si el valor no es positivo
         """
         if not isinstance(valor, (int, float)):
-            raise TypeError(f"{campo} debe ser un número, got {type(valor).__name__}")
+            raise TypeError(f"{campo} debe ser un número, usado {type(valor).__name__}")
         
         if valor <= 0:
             raise ValueError(f"{campo} debe ser positivo")

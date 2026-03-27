@@ -1,4 +1,3 @@
-# servicios/estadistica_service.py
 from typing import List, Dict, Tuple, Optional
 from collections import Counter
 from datetime import date, timedelta
