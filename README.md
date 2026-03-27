@@ -15,7 +15,9 @@ Motivos:
   - En Servicios meto la logica que no es de los modelos ni de la interfaz, porque al acabar el ejercicio tenia todo remezclado, como el validar prestamos, que tenia 50 lineas metidas y costaba leer, ahora solo tiene su estado y el servicio se encarga de la logica.
 
 Mejoras:
-  - 
+  - Localización en tiempo real de los libros
+  - Mejora de la representación de los prestamos, estilo usuario / libro
+  
 
 
 ## 📁 Estructura del Proyecto
