@@ -1,0 +1,5 @@
+db/bk/*
+__pycache__/*
+__pycache__/
+__pycache__/libro.cpython-314.pyc
+__pycache__/biblioteca.cpython-314.pyc
