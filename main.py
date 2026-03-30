@@ -1,10 +1,6 @@
 from biblioteca import *
 from servicios.biblioteca_manager import BibliotecaManager
 from datetime import date
-import subprocess
-import os
-import time
-
 
 # ============ MENÚ GESTIÓN BIBLIOTECAS ============
 
@@ -263,7 +259,7 @@ while breaker == False:
                                     print(f"✅ Se ha sobrescrito el libro {libro}")
                                     b.exportar_json(1)
                                     b.exportar_csv(1)
-                                    time.sleep(2)
+                                    b.pausa()
                                     break 
 
                                 elif opcion == "2":
@@ -285,7 +281,7 @@ while breaker == False:
                                 print(f"✅ Se ha registrado el libro {libro}")
                                 b.exportar_json(1)
                                 b.exportar_csv(1)
-                                time.sleep(2)
+                                b.pausa()
                                 break
                         b.limpiar_pantalla()
 
@@ -330,7 +326,7 @@ while breaker == False:
                             print(f"✅ Se ha registrado al usuario {usuario}")
                             b.exportar_json(1)
                             b.exportar_csv(1)
-                            time.sleep(2)
+                            b.pausa()
                         
                     elif seleccion_usu == 2: 
                         b.limpiar_pantalla()
@@ -381,7 +377,7 @@ while breaker == False:
                                     print("✅ Préstamo realizado con éxito\n", prestamo)
                                     b.exportar_json(1)
                                     b.exportar_csv(1)
-                                    time.sleep(3)
+                                    b.pausa()
                                     b.limpiar_pantalla()
 
                                 else:
@@ -391,12 +387,12 @@ while breaker == False:
 
                         except Exception as e:
                             print(f"❌ Error: {e}")
-                            time.sleep(2)
+                            b.pausa()
 
                     # Ver préstamos
                     elif seleccion_pre == 2: 
                         b.ver_prestamos()
-                        time.sleep(3)
+                        b.pausa()
                         b.limpiar_pantalla()
                     
                     # Ver préstamos activos
@@ -408,27 +404,27 @@ while breaker == False:
                                 print(f"   {p}")
                         else:
                             print("No hay préstamos activos")
-                        time.sleep(3)
+                        b.pausa()
                         b.limpiar_pantalla()
                     
                     # Ver préstamos vencidos
                     elif seleccion_pre == 5:
                         vencidos = b.prestamos_vencidos()
                         if vencidos:
-                            print("\n⚠️ PRÉSTAMOS VENCIDOS:")
+                            print("\n⚠️ PRÉSTAMOS VENCIDOS (Multas):")
                             for p in vencidos:
                                 multa = p.calcular_multa(date.today())
                                 print(f"   {p} - Multa: €{multa:.2f}")
                         else:
                             print("No hay préstamos vencidos")
-                        time.sleep(3)
+                        b.pausa()
                         b.limpiar_pantalla()
                         
                     # Devoluciones
                     elif seleccion_pre == 3: 
                         if not b.prestamos_activos():
                             print("No hay libros actualmente prestados")
-                            time.sleep(3)
+                            b.pausa()
                             b.limpiar_pantalla()
 
                         else:
@@ -469,10 +465,10 @@ while breaker == False:
                                     b.exportar_json(1)
                                     b.exportar_csv(1)
                                     print(f"✅ El libro '{prestamo_seleccionado.libro.titulo}' se ha devuelto correctamente")
-                                    time.sleep(5)
+                                    b.pausa()
                                 else:
                                     print("❌ Devolución cancelada.")
-                                    time.sleep(1)
+                                    b.pausa()
 
                             except RuntimeError as e:
                                 print("Error:", e)
@@ -542,5 +538,5 @@ while breaker == False:
 
     except ValueError:
         print("❌ Error, introduce un número de la lista")
-        time.sleep(3)
+        b.pausa()
         b.limpiar_pantalla()
