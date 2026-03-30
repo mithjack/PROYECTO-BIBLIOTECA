@@ -3,3 +3,7 @@ __pycache__/*
 __pycache__/
 __pycache__/libro.cpython-314.pyc
 __pycache__/biblioteca.cpython-314.pyc
+db/limpiar.py
+servicios/__pycache__/biblioteca_manager.cpython-314.pyc
+__pycache__/biblioteca.cpython-314.pyc
+__pycache__/libro.cpython-314.pyc
