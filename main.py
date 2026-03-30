@@ -448,6 +448,7 @@ while breaker == False:
                             salir = False
                             while breaker_dev:
                                 opcion = input("Elige ID del libro a devolver: ").strip()
+                                print("\nEscribe 'SALIR' para cancelar")
 
                                 if opcion.upper() == "SALIR":
                                     salir = True
