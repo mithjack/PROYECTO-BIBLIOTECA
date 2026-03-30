@@ -74,4 +74,5 @@ Mejoras:
 └── 📄 README.md                # Este archivo
 ├── 📄 requirements.txt         # Dependencias
 ├── 📄 usuario.py               # Entidad Usuario
+└── 📄 validadores.py           # Metaclase validadora de libro
 ```
