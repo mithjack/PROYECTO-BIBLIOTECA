@@ -36,11 +36,11 @@ def menu_gestion_bibliotecas():
         
         print("\n" + "-"*60)
         print(
-            "Opciones:",
-            "  1. Ver biblioteca actual",
-            "  2. Crear nueva biblioteca",
-            "  3. Cambiar a otra biblioteca",
-            "  4. Eliminar biblioteca",
+            "Opciones:\n",
+            "  1. Ver biblioteca actual\n",
+            "  2. Crear nueva biblioteca\n",
+            "  3. Cambiar a otra biblioteca\n",
+            "  4. Eliminar biblioteca\n",
             "  99. Volver al menú principal"
         )
         print("="*60)
