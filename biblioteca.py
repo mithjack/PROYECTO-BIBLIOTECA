@@ -391,12 +391,21 @@ class Biblioteca:
             ValueError: Si el libro o usuario no existen
             RuntimeError: Si el libro ya está prestado o el usuario supera el límite
         """
+        from servicios.biblioteca_manager import BibliotecaManager
+        
         # Usar servicio para validar
         self._prestamo_service.validar_prestamo(self, isbn, usuario_id)
         
         libro = self._libros[isbn]
         usuario = self._usuarios[usuario_id]
+        
+        # Saco el nombre de la biblioteca actual
+        nombre_biblioteca = BibliotecaManager._biblioteca_actual
+        
+        # Uno el préstamo con la biblioteca
         prestamo = Prestamo(libro, usuario, fecha, dias_maximos)
+        prestamo._biblioteca = nombre_biblioteca  
+        
         self._prestamos.append(prestamo)
         return prestamo
     
@@ -556,21 +565,24 @@ class Biblioteca:
         usuarios_csv = os.path.join(DB_DIR, "usuarios.csv")
         prestamos_csv = os.path.join(DB_DIR, "prestamos.csv")
 
+        # Libros
         with open(libros_csv, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
-            writer.writerow(["isbn","titulo","autor"])
+            writer.writerow(["isbn", "titulo", "autor"])
             for l in self._libros.values():
                 writer.writerow([l.isbn, l.titulo, l.autor])
 
+        # Usuarios
         with open(usuarios_csv, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
-            writer.writerow(["id","nombre","max_prestamos"])
+            writer.writerow(["id", "nombre", "max_prestamos"])
             for u in self._usuarios.values():
                 writer.writerow([u.id, u.nombre, u.max_prestamos])
 
+        # Préstamos
         with open(prestamos_csv, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
-            writer.writerow(["isbn","usuario","fecha","dias","devolucion"])
+            writer.writerow(["isbn", "usuario", "fecha", "dias", "devolucion", "biblioteca"])
 
             for p in self._prestamos:
                 writer.writerow([
@@ -578,8 +590,10 @@ class Biblioteca:
                     p.usuario.id,
                     p._fecha_alquiler,
                     p._dias_maximos,
-                    p._devolucion
+                    p._devolucion,
+                    getattr(p, '_biblioteca', None)
                 ])
+        
         if not oculto:
             print("Backup CSV guardado en carpeta db/ con exito")
 
@@ -590,7 +604,23 @@ class Biblioteca:
         INPUT:
             oculto (bool): Si True, no muestra mensaje de confirmación (default: False)
         """
+        from servicios.biblioteca_manager import BibliotecaManager
+        
         archivo = os.path.join(DB_DIR, "biblioteca.json")
+        
+        todos_prestamos = []
+        for nombre, biblio in BibliotecaManager._bibliotecas.items():
+            for p in biblio._prestamos:
+                if not hasattr(p, '_biblioteca') or not p._biblioteca:
+                    p._biblioteca = nombre
+                todos_prestamos.append(p)
+        
+        prestamos_unicos = {}
+        for p in todos_prestamos:
+            clave = f"{p.libro.isbn}_{p.usuario.id}_{p._fecha_alquiler}_{p._biblioteca}"
+            if clave not in prestamos_unicos:
+                prestamos_unicos[clave] = p
+        
         datos = {
             "libros": [
                 {
@@ -610,15 +640,20 @@ class Biblioteca:
                 for u in self._usuarios.values()
             ],
 
+            "bibliotecas": list(BibliotecaManager._bibliotecas.keys()),
+
+            "biblioteca_actual": BibliotecaManager._biblioteca_actual,
+            
             "prestamos": [
                 {
                     "isbn": p.libro.isbn,
                     "usuario_id": p.usuario.id,
                     "fecha": p._fecha_alquiler.isoformat(),
                     "dias": p._dias_maximos,
-                    "devolucion": None if p._devolucion is None else p._devolucion.isoformat()
+                    "devolucion": None if p._devolucion is None else p._devolucion.isoformat(),
+                    "biblioteca": getattr(p, '_biblioteca', None)
                 }
-                for p in self._prestamos
+                for p in prestamos_unicos.values()
             ]
         }
 
@@ -636,6 +671,11 @@ class Biblioteca:
         OUTPUT:
             bool: True si se cargó correctamente, False si no hay backup
         """
+        from libro import Libro
+        from usuario import Usuario
+        from prestamo import Prestamo
+        from servicios.biblioteca_manager import BibliotecaManager
+        
         json_file = os.path.join(DB_DIR, "biblioteca.json")
         libros_csv = os.path.join(DB_DIR, "libros.csv")
         usuarios_csv = os.path.join(DB_DIR, "usuarios.csv")
@@ -646,42 +686,67 @@ class Biblioteca:
             with open(json_file, "r", encoding="utf-8") as f:
                 datos = json.load(f)
 
+            # Limpiar todo
             self._libros.clear()
             self._usuarios.clear()
-            self._prestamos.clear()
+            BibliotecaManager._bibliotecas.clear()
 
+            # Libros
             for l in datos.get("libros", []):
                 libro = Libro(l["isbn"], l["titulo"], l["autor"])
                 self._libros[libro.isbn] = libro
 
+            # Usuarios
             for u in datos.get("usuarios", []):
                 usuario = Usuario(u["id"], u["nombre"], u["max_prestamos"])
                 self._usuarios[usuario.id] = usuario
 
+            # Bibliotecas
+            bibliotecas = datos.get("bibliotecas", ["Principal"])
+            biblioteca_actual = datos.get("biblioteca_actual", "Principal")
+            
+            # Crear las bibliotecas con sus préstamos
+            for nombre in bibliotecas:
+                nueva_biblio = Biblioteca()
+                nueva_biblio._initialized = True
+                nueva_biblio._libros = self._libros
+                nueva_biblio._usuarios = self._usuarios
+                nueva_biblio._prestamos = []  # Lista vacía
+                
+                BibliotecaManager._bibliotecas[nombre] = nueva_biblio
+            
+            # Cargar los préstamos en las bibliotecas correspondientes
             for p in datos.get("prestamos", []):
-                libro = self._libros[p["isbn"]]
-                usuario = self._usuarios[p["usuario_id"]]
+                biblioteca_prestamo = p.get("biblioteca")
+                if biblioteca_prestamo and biblioteca_prestamo in BibliotecaManager._bibliotecas:
+                    libro = self._libros.get(p["isbn"])
+                    usuario = self._usuarios.get(p["usuario_id"])
+                    if libro and usuario:
+                        fecha = date.fromisoformat(p["fecha"])
+                        prestamo = Prestamo(libro, usuario, fecha, p["dias"])
+                        if p.get("devolucion"):
+                            prestamo._devolucion = date.fromisoformat(p["devolucion"])
+                        prestamo._biblioteca = biblioteca_prestamo
+                        BibliotecaManager._bibliotecas[biblioteca_prestamo]._prestamos.append(prestamo)
+            
+            # Cargamos la biblioteca activa (ultima que use)
+            BibliotecaManager._biblioteca_actual = biblioteca_actual
+            
+            b_actual = BibliotecaManager._bibliotecas[BibliotecaManager._biblioteca_actual]
+            self._prestamos = b_actual._prestamos  # Esto es una REFERENCIA, no una copia
 
-                prestamo = Prestamo(
-                    libro,
-                    usuario,
-                    date.fromisoformat(p["fecha"]),
-                    p["dias"]
-                )
-
-                if p.get("devolucion"):
-                    prestamo._devolucion = date.fromisoformat(p["devolucion"])
-
-                self._prestamos.append(prestamo)
-
-            print("Backup cargado desde JSON")
+            print(
+                f"Backup cargado desde JSON.\n", 
+                "Bibliotecas: {bibliotecas}, Actual: {biblioteca_actual}\n",
+                f"Préstamos en biblioteca actual: {len(self._prestamos)}"
+            )
             return True
 
         # Intentar cargar CSV
         if os.path.exists(libros_csv) and os.path.exists(usuarios_csv):
             self._libros.clear()
             self._usuarios.clear()
-            self._prestamos.clear()
+            BibliotecaManager._bibliotecas.clear()
 
             # Libros
             with open(libros_csv, newline="", encoding="utf-8") as f:
@@ -701,33 +766,56 @@ class Biblioteca:
                     )
                     self._usuarios[usuario.id] = usuario
 
-            # Préstamos
+            # Leer préstamos y agrupar por biblioteca
+            prestamos_por_biblioteca = {}
             if os.path.exists(prestamos_csv):
                 with open(prestamos_csv, newline="", encoding="utf-8") as f:
                     reader = csv.DictReader(f)
                     for row in reader:
-                        libro = self._libros[row["isbn"]]
-                        usuario = self._usuarios[int(row["usuario"])]
+                        biblioteca = row.get("biblioteca", "Principal")
+                        if biblioteca not in prestamos_por_biblioteca:
+                            prestamos_por_biblioteca[biblioteca] = []
+                        
+                        libro = self._libros.get(row["isbn"])
+                        usuario = self._usuarios.get(int(row["usuario"]))
+                        if libro and usuario:
+                            prestamo = Prestamo(
+                                libro,
+                                usuario,
+                                date.fromisoformat(row["fecha"]),
+                                int(row["dias"])
+                            )
+                            if row["devolucion"] and row["devolucion"] != "None":
+                                prestamo._devolucion = date.fromisoformat(row["devolucion"])
+                            prestamo._biblioteca = biblioteca
+                            prestamos_por_biblioteca[biblioteca].append(prestamo)
 
-                        prestamo = Prestamo(
-                            libro,
-                            usuario,
-                            date.fromisoformat(row["fecha"]),
-                            int(row["dias"])
-                        )
+            # Bibliotecas
+            bibliotecas = list(prestamos_por_biblioteca.keys()) or ["Principal"]
+            for nombre in bibliotecas:
+                nueva_biblio = Biblioteca()
+                nueva_biblio._initialized = True
+                nueva_biblio._libros = self._libros
+                nueva_biblio._usuarios = self._usuarios
+                nueva_biblio._prestamos = prestamos_por_biblioteca.get(nombre, [])
+                BibliotecaManager._bibliotecas[nombre] = nueva_biblio
+            
+            BibliotecaManager._biblioteca_actual = bibliotecas[0] if bibliotecas else "Principal"
+            
+            # Hacer que self._prestamos apunte a la lista de la biblioteca actual
+            b_actual = BibliotecaManager._bibliotecas[BibliotecaManager._biblioteca_actual]
+            self._prestamos = b_actual._prestamos  # REFERENCIA
 
-                        if row["devolucion"] and row["devolucion"] != "None":
-                            prestamo._devolucion = date.fromisoformat(row["devolucion"])
-
-                        self._prestamos.append(prestamo)
-
-            print("Backup cargado desde CSV")
+            print(
+                f"Backup cargado desde CSV.\n",
+                "Bibliotecas: {bibliotecas}, Actual: {BibliotecaManager._biblioteca_actual}"
+            )
             return True
 
         # No hay backup
         print("No existe backup en db/")
         return False
-    
+        
     # ============ PLUGINS ============
     
     def cargar_plugins(self):

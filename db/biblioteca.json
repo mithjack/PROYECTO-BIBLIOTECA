@@ -83,55 +83,35 @@
             "max_prestamos": 1
         }
     ],
+    "bibliotecas": [
+        "Principal",
+        "VAL"
+    ],
+    "biblioteca_actual": "VAL",
     "prestamos": [
         {
             "isbn": "1",
             "usuario_id": 1,
-            "fecha": "2026-03-12",
+            "fecha": "2026-01-01",
             "dias": 7,
-            "devolucion": "2026-03-12"
-        },
-        {
-            "isbn": "1",
-            "usuario_id": 1,
-            "fecha": "2026-03-12",
-            "dias": 7,
-            "devolucion": "2026-03-12"
-        },
-        {
-            "isbn": "1",
-            "usuario_id": 2,
-            "fecha": "2026-03-12",
-            "dias": 7,
-            "devolucion": null
-        },
-        {
-            "isbn": "4",
-            "usuario_id": 3,
-            "fecha": "2026-03-26",
-            "dias": 7,
-            "devolucion": null
-        },
-        {
-            "isbn": "123",
-            "usuario_id": 44889473,
-            "fecha": "2026-03-26",
-            "dias": 7,
-            "devolucion": null
+            "devolucion": null,
+            "biblioteca": "Principal"
         },
         {
             "isbn": "2",
             "usuario_id": 1,
-            "fecha": "2026-03-27",
+            "fecha": "2026-01-03",
             "dias": 7,
-            "devolucion": null
+            "devolucion": "2026-03-30",
+            "biblioteca": "VAL"
         },
         {
             "isbn": "3",
-            "usuario_id": 1,
-            "fecha": "2026-03-27",
+            "usuario_id": 44889473,
+            "fecha": "2026-03-30",
             "dias": 7,
-            "devolucion": null
+            "devolucion": null,
+            "biblioteca": "VAL"
         }
     ]
 }
