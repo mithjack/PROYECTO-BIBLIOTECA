@@ -37,8 +37,6 @@ Motivos y lugar:
 
   - Metaclase Validadora: No uso una metacalase de validación con biblioteca, porque con el patron singleton ya le doy un modelo a seguir y seria un poco redundante, pero libro si que es un buen ejemplo donde puedo incorporarlo. Pero como ya tengo mixins de validación de datos me ha dado conflicto, por lo que he tenido que crear una intermedia "MetaCombinada" para poder utilizar una metaclase junto a los mixins. (que podria haber quitado los mixin, pero asi tengo doble verificación)
 
-<buscar validacion metaclase>
-
 Mejoras:
   - Localización en tiempo real de los libros.
   - Mejora de la representación de los préstamos, estilo usuario / libro.

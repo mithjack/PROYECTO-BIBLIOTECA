@@ -390,8 +390,15 @@ while breaker == False:
                             b.pausa()
 
                     # Ver préstamos
-                    elif seleccion_pre == 2: 
-                        b.ver_prestamos()
+                    elif seleccion_pre == 2:
+                        if b.prestamos:
+                            print("\n📋 TODOS LOS PRÉSTAMOS:")
+                            for p in b.prestamos:
+                                biblioteca = getattr(p, '_biblioteca', 'Desconocida')
+                                estado = "ACTIVO" if p.esta_activo() else f"DEVUELTO {p._devolucion}"
+                                print(f"   {p.libro.titulo} → {p.usuario.nombre} | Biblioteca: {biblioteca} | {estado}")
+                        else:
+                            print("No hay préstamos registrados.")
                         b.pausa()
                         b.limpiar_pantalla()
                     
@@ -401,7 +408,8 @@ while breaker == False:
                         if activos:
                             print("\n📋 PRÉSTAMOS ACTIVOS:")
                             for p in activos:
-                                print(f"   {p}")
+                                biblioteca = getattr(p, '_biblioteca', 'Desconocida')
+                                print(f"   {p.libro.titulo} (ISBN: {p.libro.isbn}) → {p.usuario.nombre} | Biblioteca: {biblioteca} | Fecha: {p._fecha_alquiler} | Días: {p._dias_maximos}")
                         else:
                             print("No hay préstamos activos")
                         b.pausa()
