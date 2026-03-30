@@ -1,8 +1,12 @@
 # libro.py
 from plugins.mixins import Validable, ValidadoresComunes
+from validadores import ValidarLibroMeta
 
+class MetaCombinada(ValidarLibroMeta, type(Validable), type(ValidadoresComunes)):
+    """Metaclase combinada para resolver conflictos con Mixins"""
+    pass
 
-class Libro(Validable, ValidadoresComunes):
+class Libro(Validable, ValidadoresComunes, metaclass=MetaCombinada):
     """
     Clase que representa un libro en la biblioteca.
     """
@@ -57,12 +61,15 @@ class Libro(Validable, ValidadoresComunes):
 
     @titulo.setter
     def titulo(self, titulo):
+        self.validate_titulo(titulo)
         self._titulo = titulo
     
     @staticmethod
     def validate_titulo(value):
         """Validador para el título"""
-        Libro.validar_no_vacio(value, "Título")
+        if not value or value == "":
+            raise ValueError("El título no puede estar vacío")
+        return True
     
     @property
     def autor(self) -> str:
@@ -70,9 +77,12 @@ class Libro(Validable, ValidadoresComunes):
 
     @autor.setter
     def autor(self, autor):
+        self.validate_autor(autor)
         self._autor = autor
     
     @staticmethod
     def validate_autor(value):
         """Validador para el autor"""
-        Libro.validar_no_vacio(value, "Autor")
+        if not value or value == "":
+            raise ValueError("El autor no puede estar vacío")
+        return True
