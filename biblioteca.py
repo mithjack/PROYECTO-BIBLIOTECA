@@ -409,16 +409,171 @@ class Biblioteca:
         self._prestamos.append(prestamo)
         return prestamo
     
-    def ver_prestamos(self):
+    def ver_prestamos(self, filtro: str = "todos", prestamos_por_pagina: int = 10):
         """
-        Muestra todos los préstamos registrados (activos y devueltos).
+        Muestra los préstamos con paginación y filtro
+        Permite cambiar entre ver todos los préstamos o solo los de la biblioteca actual.
+        
+        INPUT:
+            filtro (str): Tipo de préstamos a mostrar:
+                - "todos": saca todos los préstamos
+                - "activos": ssaca los préstamos activos
+                - "devueltos": saca los préstamos devueltos
+                - "vencidos": saca los préstamos vencidos (con multa)
+            prestamos_por_pagina (int): Número de préstamos por página (default: 10)
         """
-        if not self._prestamos:
-            print("No hay préstamos registrados.")
-            return
+        from datetime import date, timedelta
+        from servicios.biblioteca_manager import BibliotecaManager
+        
+        self.limpiar_pantalla()
+        
+        solo_biblioteca_actual = True
+        
+        while True:
+            prestamos_totales = []
+            prestamos_unicos = {}
+            for nombre, biblio in BibliotecaManager._bibliotecas.items():
+                for p in biblio._prestamos:
+                    clave = f"{p.libro.isbn}_{p.usuario.id}_{p._fecha_alquiler}_{getattr(p, '_biblioteca', nombre)}"
+                    if clave not in prestamos_unicos:
+                        prestamos_unicos[clave] = p
+                        prestamos_totales.append(p)
+            
+            if solo_biblioteca_actual:
+                biblioteca_actual = BibliotecaManager._biblioteca_actual
 
-        for prestamo in self._prestamos:
-            print(prestamo)
+                prestamos_base = [p for p in prestamos_totales if getattr(p, '_biblioteca', '') == biblioteca_actual]
+                modo_texto = f" (Solo biblioteca: {biblioteca_actual})"
+                modo_icono = "🏛️"
+            else:
+                prestamos_base = prestamos_totales
+                modo_texto = " (TODAS las bibliotecas)"
+                modo_icono = "🌍"
+            
+            # Filtro a sacar
+            if filtro == "activos":
+                prestamos_lista = [p for p in prestamos_base if p.esta_activo()]
+                titulo = f"PRÉSTAMOS ACTIVOS{modo_texto}"
+                icono = "🟢"
+            elif filtro == "devueltos":
+                prestamos_lista = [p for p in prestamos_base if not p.esta_activo()]
+                titulo = f"PRÉSTAMOS DEVUELTOS{modo_texto}"
+                icono = "🔵"
+            elif filtro == "vencidos":
+                prestamos_lista = [p for p in prestamos_base if p.esta_activo() and p.calcular_multa(date.today()) > 0]
+                titulo = f"PRÉSTAMOS VENCIDOS (con multa){modo_texto}"
+                icono = "⚠️💰"
+            else:
+                prestamos_lista = prestamos_base
+                titulo = f"Prestamos{modo_texto}"
+                icono = "📋"
+    
+            total_prestamos = len(prestamos_lista)
+            
+            if total_prestamos == 0:
+                print(f"⚠️  No hay {titulo.lower()} registrados.")
+                print(f"\n{'='*70}")
+                print("Comandos:")
+                if solo_biblioteca_actual:
+                    print("  [Z] - Ver préstamos de TODAS las bibliotecas")
+                else:
+                    print("  [Z] - Ver solo préstamos de la biblioteca actual")
+                print("  [Q] - Salir")
+                print(f"{'='*70}")
+                
+                comando = input("\n➡️  ").strip().lower()
+                if comando == 'z':
+                    solo_biblioteca_actual = not solo_biblioteca_actual
+                    self.limpiar_pantalla()
+                    continue
+                elif comando == 'q':
+                    break
+                else:
+                    break
+            
+            # Mostrar resumen de multas si hay
+            if filtro == "vencidos":
+                total_multas = sum(p.calcular_multa(date.today()) for p in prestamos_lista)
+                print(f"\n💰 TOTAL MULTAS PENDIENTES: €{total_multas:.2f}")
+            
+            pagina_actual = 0
+            total_paginas = (total_prestamos + prestamos_por_pagina - 1) // prestamos_por_pagina
+            
+            while True:
+                inicio = pagina_actual * prestamos_por_pagina
+                fin = min(inicio + prestamos_por_pagina, total_prestamos)
+                
+                print(f"\n{'='*70}")
+                print(
+                    f"{icono} {titulo} (Página {pagina_actual + 1}/{total_paginas})\n",
+                    f"Total: {total_prestamos} préstamo(s)"
+                )
+                print(f"{'='*70}\n")
+                
+                for i in range(inicio, fin):
+                    p = prestamos_lista[i]
+                    biblioteca = getattr(p, '_biblioteca', 'Desconocida')
+                    estado = "ACTIVO" if p.esta_activo() else f"DEVUELTO {p._devolucion.strftime('%d/%m/%Y') if p._devolucion else ''}"
+                    
+                    print(
+                        f"{i+1}. 📖 {p.libro.titulo} (ISBN: {p.libro.isbn})\n",
+                        f"   👤 Usuario: {p.usuario.nombre} (ID: {p.usuario.id})\n",
+                        f"   🏛️  Biblioteca: {biblioteca}\n",
+                        f"   📅 Alquiler: {p._fecha_alquiler.strftime('%d/%m/%Y')}"
+                        )
+                    
+                    if p.esta_activo():
+                        fecha_limite = p._fecha_alquiler + timedelta(days=p._dias_maximos)
+                        dias_restantes = (fecha_limite - date.today()).days
+                        multa = p.calcular_multa(date.today())
+                        
+                        print(f"    ⏰ Límite: {fecha_limite.strftime('%d/%m/%Y')}")
+                        if dias_restantes >= 0:
+                            print(f"    ⏳ Días restantes: {dias_restantes}")
+                        else:
+                            print(f"    ⚠️  VENCIDO hace {abs(dias_restantes)} días")
+                        if multa > 0:
+                            print(f"    💰 MULTA: €{multa:.2f}")
+                    else:
+                        dias_prestamo = (p._devolucion - p._fecha_alquiler).days if p._devolucion else 0
+                        print(f"    ↩️  Devuelto: {p._devolucion.strftime('%d/%m/%Y') if p._devolucion else 'N/A'}")
+                        print(f"    📆 Días prestado: {dias_prestamo}")
+                    
+                    print()
+                
+                print(f"{'='*70}")
+                print(
+                    "Comandos:\n",
+                    "  [ENTER] - Siguiente página\n",
+                    "  [A] - Página anterior"
+                )
+                if solo_biblioteca_actual:
+                    print("   [Z] - Ver préstamos de TODAS las bibliotecas")
+                else:
+                    print("   [Z] - Ver solo préstamos de la biblioteca actual")
+                print("   [Q] - Salir")
+                print(f"{'='*70}")
+                
+                comando = input("\n➡️  ").strip().lower()
+                
+                if comando == '' or comando == 'siguiente' or comando == 's':
+                    if pagina_actual + 1 < total_paginas:
+                        pagina_actual += 1
+                    else:
+                        print("\n⚠️ Ya estás en la última página.")
+                        time.sleep(1)
+                elif comando == 'a' or comando == 'anterior':
+                    if pagina_actual > 0:
+                        pagina_actual -= 1
+                    else:
+                        print("\n⚠️ Ya estás en la primera página.")
+                        time.sleep(1)
+                elif comando == 'z':
+                    solo_biblioteca_actual = not solo_biblioteca_actual
+                    self.limpiar_pantalla()
+                    break  # Salir del bucle de paginación para recargar con el nuevo modo
+                elif comando == 'q' or comando == 'salir':
+                    return
 
     def devolver_libro(self, isbn: str, fecha: date):
         """

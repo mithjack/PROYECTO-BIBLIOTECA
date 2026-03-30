@@ -88,7 +88,7 @@
         "VAL",
         "MAD"
     ],
-    "biblioteca_actual": "VAL",
+    "biblioteca_actual": "MAD",
     "prestamos": [
         {
             "isbn": "1",
@@ -117,6 +117,14 @@
         {
             "isbn": "5",
             "usuario_id": 5,
+            "fecha": "2026-03-30",
+            "dias": 7,
+            "devolucion": null,
+            "biblioteca": "VAL"
+        },
+        {
+            "isbn": "1234",
+            "usuario_id": 6,
             "fecha": "2026-03-30",
             "dias": 7,
             "devolucion": null,

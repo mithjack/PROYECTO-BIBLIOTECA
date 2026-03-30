@@ -206,7 +206,7 @@ while breaker == False:
     
     print(
         "\n" + "="*60,
-        "\n📚 BIBLIOTECA 2.0",
+        "📚 BIBLIOTECA 2.0",
         "="*60,
         "\n1 - Menú de Libros",
         "2 - Menú de Usuarios", 
@@ -226,15 +226,18 @@ while breaker == False:
             breaker_lib = True
             b.limpiar_pantalla()
             while breaker_lib:
+                print("\n" + "="*60)
+                print("GESTIÓN DE LIBROS")
+                print("="*60)
                 print(
-                    "\nOpciones de Libros\n",
-                    "1 - Registrar Libro \n",
-                    "2 - Ver/Buscar Todos los Libros de la Biblioteca \n",
-                    "3 - Ver/Buscar los Libros Disponibles \n",
-                    "99 - Volver \n",
+                    "\n",
+                    " 1 - Registrar Libro \n",
+                    " 2 - Ver/Buscar Todos los Libros de la Biblioteca \n",
+                    " 3 - Ver/Buscar los Libros Disponibles \n",
+                    " 99 - Volver \n",
                 )
                 try:
-                    seleccion_lib = int(input("Que quieres hacer? "))
+                    seleccion_lib = int(input("➡️  Que quieres hacer? "))
             
                     # Registrar libro
                     if seleccion_lib == 1:
@@ -308,14 +311,17 @@ while breaker == False:
             breaker_usu = True
             b.limpiar_pantalla()
             while breaker_usu:
+                print("\n" + "="*60)
+                print("GESTIÓN DE USUARIOS")
+                print("="*60)
                 print(
-                    "\nOpciones de Usuarios\n",
-                    "1 - Registrar Usuario \n",
-                    "2 - Ver Todos los Usuarios \n",
-                    "99 - Volver \n",
+                    "\n",
+                    " 1 - Registrar Usuario \n",
+                    " 2 - Ver Todos los Usuarios \n",
+                    " 99 - Volver \n",
                 )
                 try:
-                    seleccion_usu = int(input("Que quieres hacer? "))
+                    seleccion_usu = int(input("➡️  Que quieres hacer? "))
             
                     if seleccion_usu == 1:
                         id = int(input("Dime el ID (numerico): "))
@@ -345,17 +351,21 @@ while breaker == False:
             breaker_pre = True
             b.limpiar_pantalla()
             while breaker_pre:
+                print("\n" + "="*60)
+                print("GESTIÓN DE PRESTAMOS")
+                print("="*60)
                 print(
-                    "\nOpciones de Prestamos\n",
-                    "1 - Prestar Libro \n",
-                    "2 - Ver Registro de Prestamos \n",
-                    "3 - Devolver un Libro \n",
-                    "4 - Ver Prestamos Activos \n",
-                    "5 - Ver Prestamos Vencidos \n",
-                    "99 - Volver \n",
+                    "\n",
+                    " 1 - Prestar Libro \n",
+                    " 2 - Ver TODOS los préstamos \n",
+                    " 3 - Ver préstamos ACTIVOS \n",
+                    " 4 - Ver préstamos DEVUELTOS \n",
+                    " 5 - Ver préstamos VENCIDOS (con multa) \n",
+                    " 6 - Devolver un Libro \n",
+                    " 99 - Volver \n",
                 )
                 try:
-                    seleccion_pre = int(input("Que quieres hacer? "))
+                    seleccion_pre = int(input("➡️  Que quieres hacer? "))
             
                     # Prestar
                     if seleccion_pre == 1:
@@ -389,52 +399,28 @@ while breaker == False:
                             print(f"❌ Error: {e}")
                             b.pausa()
 
-                    # Ver préstamos
+                    # Ver préstamos (Todos)
                     elif seleccion_pre == 2:
-                        if b.prestamos:
-                            print("\n📋 TODOS LOS PRÉSTAMOS:")
-                            for p in b.prestamos:
-                                biblioteca = getattr(p, '_biblioteca', 'Desconocida')
-                                estado = "ACTIVO" if p.esta_activo() else f"DEVUELTO {p._devolucion}"
-                                print(f"   {p.libro.titulo} → {p.usuario.nombre} | Biblioteca: {biblioteca} | {estado}")
-                        else:
-                            print("No hay préstamos registrados.")
-                        b.pausa()
-                        b.limpiar_pantalla()
+                        b.ver_prestamos(filtro="todos")
                     
-                    # Ver préstamos activos
+                    # Ver préstamos (Activos)
+                    elif seleccion_pre == 3:
+                        b.ver_prestamos(filtro="activos")
+                    
+                    # Ver préstamos (Devueltos)
                     elif seleccion_pre == 4:
-                        activos = b.prestamos_activos()
-                        if activos:
-                            print("\n📋 PRÉSTAMOS ACTIVOS:")
-                            for p in activos:
-                                biblioteca = getattr(p, '_biblioteca', 'Desconocida')
-                                print(f"   {p.libro.titulo} (ISBN: {p.libro.isbn}) → {p.usuario.nombre} | Biblioteca: {biblioteca} | Fecha: {p._fecha_alquiler} | Días: {p._dias_maximos}")
-                        else:
-                            print("No hay préstamos activos")
-                        b.pausa()
-                        b.limpiar_pantalla()
+                        b.ver_prestamos(filtro="devueltos")
                     
-                    # Ver préstamos vencidos
+                    # Ver préstamos (con multa)
                     elif seleccion_pre == 5:
-                        vencidos = b.prestamos_vencidos()
-                        if vencidos:
-                            print("\n⚠️ PRÉSTAMOS VENCIDOS (Multas):")
-                            for p in vencidos:
-                                multa = p.calcular_multa(date.today())
-                                print(f"   {p} - Multa: €{multa:.2f}")
-                        else:
-                            print("No hay préstamos vencidos")
-                        b.pausa()
-                        b.limpiar_pantalla()
-                        
+                        b.ver_prestamos(filtro="vencidos")
+                    
                     # Devoluciones
-                    elif seleccion_pre == 3: 
+                    elif seleccion_pre == 6: 
                         if not b.prestamos_activos():
                             print("No hay libros actualmente prestados")
                             b.pausa()
                             b.limpiar_pantalla()
-
                         else:
                             print("\nLibros actualmente prestados:")
                             print("\nEscribe 'SALIR' para cancelar")
@@ -447,8 +433,7 @@ while breaker == False:
                             breaker_dev = True
                             salir = False
                             while breaker_dev:
-                                opcion = input("Elige ID del libro a devolver: ").strip()
-                                print("\nEscribe 'SALIR' para cancelar")
+                                opcion = input("\nElige ID del libro a devolver: ").strip()
 
                                 if opcion.upper() == "SALIR":
                                     salir = True
@@ -481,6 +466,7 @@ while breaker == False:
 
                             except RuntimeError as e:
                                 print("Error:", e)
+                                b.pausa()
 
                     elif seleccion_pre == 99:
                         breaker_pre = False
@@ -488,8 +474,11 @@ while breaker == False:
 
                     else:
                         print("Opción no válida")
+                        b.pausa()
+                        
                 except ValueError:  
                     print("Elige un número de la lista")
+                    b.pausa()
                 b.limpiar_pantalla()
 
         # Menu Plugins
@@ -497,15 +486,18 @@ while breaker == False:
             breaker_plug = True
             b.limpiar_pantalla()
             while breaker_plug:
+                print("\n" + "="*60)
+                print("ESTADISTICAS")
+                print("="*60)
                 print(
-                    "\nSacar Estadisticas\n",
-                    "1 - Total de Libros \n",
-                    "2 - Total Usuarios \n",
-                    "3 - Total de Prestamos \n",
-                    "99 - Volver \n",
+                    "\n",
+                    " 1 - Total de Libros \n",
+                    " 2 - Total Usuarios \n",
+                    " 3 - Total de Prestamos \n",
+                    " 99 - Volver \n",
                 )
                 try:
-                    seleccion_plug = int(input("Que quieres hacer? "))
+                    seleccion_plug = int(input("➡️  Que quieres hacer? "))
                     if seleccion_plug == 1:
                         print(b.total_libros())
                         b.pausa()
@@ -544,6 +536,7 @@ while breaker == False:
 
         else:
             print("❌ Opción no válida")
+        b.limpiar_pantalla()
 
     except ValueError:
         print("❌ Error, introduce un número de la lista")
