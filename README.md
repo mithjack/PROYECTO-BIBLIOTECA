@@ -10,6 +10,8 @@ Motivos y lugar:
 
   - Patron Singleton: He utilizado un singleton en biblioteca para hacer la biblioteca centralizada, estilo netflix o blockbuster al inicio de la era stream, que desde x lugares pedias a un servidor central la película y la recibías, stock único para todas las bibliotecas, sin pisarse entre ellas con el singleton.
 
+  - Metaclase Validadora: No uso una metacalase de validación con biblioteca, porque con el patron singleton ya le doy un modelo a seguir y seria un poco redundante, pero libro si que es un buen ejemplo donde puedo incorporarlo. Pero como ya tengo mixins de validación de datos me ha dado conflicto, por lo que he tenido que crear una intermedia "MetaCombinada" para poder utilizar una metaclase junto a los mixins. (que podria haber quitado los mixin, pero asi tengo doble verificación)
+
   - Plugins: Incluyo los decoradores de validación como los Mixins, los he centralizado en la misma carpeta para simplificar carpetas de servicios.
   - - Las utilidades son las funciones que se comparte entre todas las clases, como limpiar pantalla, pausar pantalla o generar un menu.
   - - Mixins tenemos los validadores comunes, los utilizamos en libro y usuario.
@@ -35,13 +37,9 @@ Motivos y lugar:
   - - 4 préstamo: Calculo de préstamos, de multas, devoluciones y retrasos.
   - - 5 libro: Creación y validación de libros.
 
-  - Metaclase Validadora: No uso una metacalase de validación con biblioteca, porque con el patron singleton ya le doy un modelo a seguir y seria un poco redundante, pero libro si que es un buen ejemplo donde puedo incorporarlo. Pero como ya tengo mixins de validación de datos me ha dado conflicto, por lo que he tenido que crear una intermedia "MetaCombinada" para poder utilizar una metaclase junto a los mixins. (que podria haber quitado los mixin, pero asi tengo doble verificación)
-
 Mejoras:
   - Localización en tiempo real de los libros.
-  - Mejora de la representación de los préstamos, estilo usuario / libro.
   - Dar de alta / baja libros.
-  - Exportar las Bibliotecas en el CSV y JSON.
   - Posibilidad de la multa aumente pasado mes o similar.
 
 
